@@ -1,0 +1,17 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
+async function test() {
+  try {
+    console.log("Querying pengurus table...");
+    const list = await prisma.pengurus.findMany();
+    console.log("Success! Total pengurus found:", list.length);
+    console.log(list);
+  } catch (error) {
+    console.error("Database query failed:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+test();

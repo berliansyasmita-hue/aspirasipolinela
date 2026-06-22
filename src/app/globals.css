@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* Mengunci warna kuning emas polinela dengan standar CSS variabel */
+:root {
+  --polinela-gold: #FFC72C;
+}
+
+/* Membuat kelas utilitas kustom agar bisa dipanggil di Tailwind */
+.bg-polinela-gold {
+  background-color: var(--polinela-gold);
+}
+
+.text-polinela-gold {
+  color: var(--polinela-gold);
+}
+
+.hover\:bg-polinela-gold:hover {
+  background-color: var(--polinela-gold);
+}
+
+.hover\:text-polinela-gold:hover {
+  color: var(--polinela-gold);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 199, 44, 0.1);
+  }
+  50% {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.1), 0 0 15px 2px rgba(255, 199, 44, 0.25);
+  }
+}
+
+.hover-glow-gold {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-glow-gold:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 199, 44, 0.4);
+  animation: pulse-glow 2s infinite;
+}

@@ -1,0 +1,65 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. Tabel Akun Mahasiswa Polinela
+model Mahasiswa {
+  id         Int      @id @default(autoincrement())
+  npm        String   @unique // NPM unik tidak boleh kembar
+  nama       String   @default("") // Nama lengkap mahasiswa
+  password   String
+  fotoKtmUrl String   // Menyimpan alamat link foto KTM yang di-upload
+  isVerified Boolean  @default(false) // Status verifikasi admin
+  createdAt  DateTime @default(now())
+  
+  // Relasi: Satu mahasiswa bisa mengirim banyak aspirasi
+  aspirasi   Aspirasi[]
+}
+
+// 2. Tabel Pengaduan / Aspirasi
+model Aspirasi {
+  id          Int      @id @default(autoincrement())
+  judul       String
+  kategori    String   // Fasilitas, Akademik, UKT, dll
+  deskripsi   String   @db.Text
+  isAnonymous Boolean  @default(false)
+  status      String   @default("Diproses") // Diproses, Selesai, Ditolak
+  isVisible   Boolean  @default(false)    // Moderasi visibilitas publik oleh admin
+  createdAt   DateTime @default(now())
+
+  // Menghubungkan aspirasi ke akun mahasiswa yang mengirimkannya
+  mahasiswaId Int?
+  mahasiswa   Mahasiswa? @relation(fields: [mahasiswaId], references: [id], onDelete: Cascade)
+}
+
+// 3. Tabel Berita Terbaru
+model Berita {
+  id        Int      @id @default(autoincrement())
+  judul     String
+  narasi    String   @db.Text
+  fotoUrl   String   // Menyimpan link berkas gambar berita
+  createdAt DateTime @default(now())
+}
+
+// 4. Tabel Admin Advokesma
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+// 5. Tabel Pengurus
+model Pengurus {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique // e.g. "menteri", "wamen1", "wamen2", "staff1", "staff2", dll.
+  nama      String   // Nama lengkap pengurus
+  jabatan   String   // Nama jabatan resmi
+  fotoUrl   String?  // Alamat URL/lokasi foto pengurus
+  detail    String   @db.Text // Rincian tugas / filosofi peran
+  updatedAt DateTime @updatedAt
+}
