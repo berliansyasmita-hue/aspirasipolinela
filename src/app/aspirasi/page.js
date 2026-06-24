@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import LoadingGold from "../LoadingGold";
 
 export default function DaftarAspirasi() {
   const [aspirasiList, setAspirasiList] = useState([]);
@@ -78,10 +79,7 @@ export default function DaftarAspirasi() {
 
         {/* Keadaan Memuat (Loading) */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center py-20 space-y-4">
-            <div className="w-12 h-12 border-4 border-polinela-gold border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-gray-500 text-sm font-medium">Menarik data aspirasi dari Supabase...</p>
-          </div>
+          <LoadingGold text="Menarik data aspirasi dari Supabase..." textColor="text-gray-500" />
         )}
 
         {/* Keadaan Eror */}

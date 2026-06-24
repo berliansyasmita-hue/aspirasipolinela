@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import LoadingGold from "../LoadingGold";
 
 export default function ProfilKementerian() {
   // Active tab state: "about" | "logo" | "visi-misi" | "anggota"
@@ -260,7 +261,7 @@ export default function ProfilKementerian() {
                 <h3 className="text-2xl font-black tracking-tight leading-snug mb-4">Visi Advokesma</h3>
                 <div className="h-1 w-14 bg-polinela-gold mb-6 rounded-full"></div>
                 <p className="text-slate-200 text-sm sm:text-base leading-relaxed italic text-left">
-                  "Mewujudkan Advokesma sebagai garda terdepan yang responsif, inklusif, dan solutif dalam menjamin terpenuhinya hak serta kesejahteraan mahasiswa."
+                  &quot;Mewujudkan Advokesma sebagai garda terdepan yang responsif, inklusif, dan solutif dalam menjamin terpenuhinya hak serta kesejahteraan mahasiswa.&quot;
                 </p>
               </div>
 
@@ -311,10 +312,7 @@ export default function ProfilKementerian() {
           {activeTab === "anggota" && (
             <div className="space-y-12 animate-fade-in">
               {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                  <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-gray-500 text-sm font-medium">Memuat data pengurus...</p>
-                </div>
+                <LoadingGold text="Memuat data pengurus..." textColor="text-gray-500" />
               ) : (
                 <>
                   {/* Jajaran Pimpinan */}

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import LoadingGold from "./LoadingGold";
 
 export default function Home() {
   const [beritaList, setBeritaList] = useState([]);
@@ -75,7 +76,7 @@ export default function Home() {
           </div>
 
           <span className="inline-flex items-center px-4 py-1.5 rounded-full text-xs bg-amber-500/15 text-polinela-gold border border-amber-500/30 uppercase tracking-widest mb-6">
-            "Langkah berpijak pada hak, karsa bergerak menolak jarak."
+            &quot;Langkah berpijak pada hak, karsa bergerak menolak jarak.&quot;
           </span>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-none mb-6 text-white">
@@ -85,7 +86,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-            "Suarakan lelahmu di muara ini, biarkan suaramu yang mencari arah tak lagi merasa sendiri. Melalui portal resmi Advokesma BEM KBM Politeknik Negeri Lampung, kami merentangkan tangan merengkuh beban akademik mahasiswa dan menghidupkan kembali denyut di wadah juang. Temukan pula rekam jejak kami dalam lembaran warta terkini seputar Politeknik Negeri Lampung."
+            &quot;Suarakan lelahmu di muara ini, biarkan suaramu yang mencari arah tak lagi merasa sendiri. Melalui portal resmi Advokesma BEM KBM Politeknik Negeri Lampung, kami merentangkan tangan merengkuh beban akademik mahasiswa dan menghidupkan kembali denyut di wadah juang. Temukan pula rekam jejak kami dalam lembaran warta terkini seputar Politeknik Negeri Lampung.&quot;
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
@@ -96,7 +97,7 @@ export default function Home() {
               Sampaikan Aspirasi Sekarang
             </Link>
             <Link
-              href="/profil"
+              href="/aspirasi"
               className="w-full sm:w-auto bg-white/10 hover:bg-white/15 text-white font-bold border border-white/20 px-8 py-4 rounded-2xl backdrop-blur-md transform hover:-translate-y-0.5 transition-all text-base text-center"
             >
               Lihat Daftar Aspirasi
@@ -126,10 +127,7 @@ export default function Home() {
 
         {/* Keadaan Memuat Berita */}
         {loadingBerita ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-4">
-            <div className="w-10 h-10 border-4 border-polinela-gold border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-gray-400 text-sm font-medium">Memuat berita terbaru dari server...</p>
-          </div>
+          <LoadingGold text="Memuat berita terbaru dari server..." textColor="text-gray-400" />
         ) : beritaList.length === 0 ? (
           // Jika Berita Kosong
           <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center shadow-sm max-w-2xl mx-auto">

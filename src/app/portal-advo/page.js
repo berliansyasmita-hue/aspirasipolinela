@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import LoadingGold from "../LoadingGold";
 
 export default function AdminDashboard() {
   // Authentication states
@@ -103,7 +104,7 @@ export default function AdminDashboard() {
   }, []);
 
   // 2. Fetch data based on active tab
-  const fetchTabContent = async (tab) => {
+  async function fetchTabContent(tab) {
     setLoadingData(true);
     try {
       if (tab === "mahasiswa") {
@@ -128,7 +129,7 @@ export default function AdminDashboard() {
     } finally {
       setLoadingData(false);
     }
-  };
+  }
 
   // Ubah tab
   const handleTabChange = (tab) => {
@@ -324,9 +325,8 @@ export default function AdminDashboard() {
 
   if (checkingAuth) {
     return (
-      <div className="bg-slate-900 min-h-screen text-white flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-polinela-gold border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-slate-400 text-sm">Memeriksa hak akses admin...</p>
+      <div className="bg-slate-900 min-h-screen flex items-center justify-center">
+        <LoadingGold text="Memeriksa hak akses admin..." textColor="text-slate-400" />
       </div>
     );
   }
@@ -407,10 +407,7 @@ export default function AdminDashboard() {
 
         {/* LOADING INDICATOR FOR TAB DATA */}
         {loadingData ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-4">
-            <div className="w-10 h-10 border-4 border-polinela-gold border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-slate-500 text-sm">Menarik data terbaru dari Supabase...</p>
-          </div>
+          <LoadingGold text="Menarik data terbaru dari Supabase..." textColor="text-slate-500" />
         ) : (
           <div className="space-y-6">
             

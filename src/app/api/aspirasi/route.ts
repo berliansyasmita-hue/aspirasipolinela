@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server"
 import { prisma } from "../../../lib/prisma"
 import { getSession } from "../../../lib/session"
-import DOMPurify from "isomorphic-dompurify"
+
+function sanitizeInput(text: string): string {
+  if (!text) return "";
+  return text.replace(/<\/?[^>]+(>|$)/g, "");
+}
 
 // 1. GET: Menarik daftar aspirasi dari database Supabase
 export async function GET() {
@@ -51,13 +55,39 @@ export async function POST(request: Request) {
       )
     }
 
-    // Sanitasi input menggunakan DOMPurify untuk mencegah serangan Stored XSS
-    const sanitizedJudul = DOMPurify.sanitize(judul);
-    const sanitizedDeskripsi = DOMPurify.sanitize(deskripsi);
+    // Sanitasi input untuk mencegah serangan Stored XSS dengan menghapus tag HTML
+    const sanitizedJudul = sanitizeInput(judul);
+    const sanitizedDeskripsi = sanitizeInput(deskripsi);
 
-    // Ambil sesi mahasiswa jika ada (jika sedang login)
+    // Verifikasi sesi mahasiswa secara ketat
     const session = await getSession();
-    const mahasiswaId = session ? session.id : null;
+    if (!session) {
+      return NextResponse.json(
+        { success: false, error: "Sesi tidak valid atau telah berakhir. Harap login kembali!" },
+        { status: 401 }
+      );
+    }
+
+    // Ambil status verifikasi KTM mahasiswa dari database
+    const mhs = await prisma.mahasiswa.findUnique({
+      where: { id: session.id },
+    });
+
+    if (!mhs) {
+      return NextResponse.json(
+        { success: false, error: "Akun mahasiswa tidak ditemukan!" },
+        { status: 404 }
+      );
+    }
+
+    if (!mhs.isVerified) {
+      return NextResponse.json(
+        { success: false, error: "Akun Anda belum disetujui/diverifikasi oleh admin!" },
+        { status: 403 }
+      );
+    }
+
+    const mahasiswaId = mhs.id;
 
     // Perintah Sakti: Masukkan data langsung ke tabel Aspirasi di Supabase
     const aspirasiBaru = await prisma.aspirasi.create({

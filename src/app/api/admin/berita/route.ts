@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { getAdminSession } from "../../../../lib/session";
-import { promises as fs } from "fs";
 import path from "path";
+import { supabase } from "../../../../lib/supabase";
 
 // POST: Membuat Berita Baru
 export async function POST(request: Request) {
@@ -41,19 +41,43 @@ export async function POST(request: Request) {
       );
     }
 
-    // Simpan foto berita ke public/uploads/
-    const bytes = await fotoFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await fs.mkdir(uploadDir, { recursive: true });
-
+    // Simpan foto berita ke Supabase Storage (atau lokal sebagai fallback)
+    let fotoUrl = "";
+    const isSupabaseConfigured =
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY &&
+      !process.env.SUPABASE_SERVICE_ROLE_KEY.startsWith("isi_");
     const originalExt = path.extname(fotoFile.name) || ".png";
     const filename = `berita_${Date.now()}${originalExt}`;
-    const filepath = path.join(uploadDir, filename);
 
-    await fs.writeFile(filepath, buffer);
-    const fotoUrl = `/uploads/${filename}`;
+    if (isSupabaseConfigured) {
+      const bytes = await fotoFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("ktm-uploads")
+        .upload(`berita/${filename}`, buffer, {
+          contentType: fotoFile.type,
+          upsert: true,
+        });
+
+      if (uploadError) {
+        console.error("Supabase Storage Upload Error:", uploadError);
+        return NextResponse.json(
+          { success: false, message: "Gagal mengunggah foto berita ke Supabase Storage!" },
+          { status: 500 }
+        );
+      }
+
+      const { data: publicUrlData } = supabase.storage.from("ktm-uploads").getPublicUrl(`berita/${filename}`);
+      fotoUrl = publicUrlData.publicUrl;
+    } else {
+      // Fallback ke penyimpanan base64 data URL jika Supabase belum siap (untuk dev environment/deploy tanpa Supabase Storage)
+      const bytes = await fotoFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const base64 = buffer.toString("base64");
+      fotoUrl = `data:${fotoFile.type};base64,${base64}`;
+    }
 
     // Simpan di DB
     const newBerita = await prisma.berita.create({

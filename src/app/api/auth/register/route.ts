@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import bcrypt from "bcrypt";
-import { promises as fs } from "fs";
-import path from "path";
 import { setSession } from "../../../../lib/session";
 import { supabase } from "../../../../lib/supabase";
 
@@ -67,7 +65,10 @@ export async function POST(request: Request) {
     const filename = `${uuid}${ext}`;
 
     let fotoKtmUrl = "";
-    const isSupabaseConfigured = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const isSupabaseConfigured =
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY &&
+      !process.env.SUPABASE_SERVICE_ROLE_KEY.startsWith("isi_");
 
     if (isSupabaseConfigured) {
       // Unggah ke Supabase Storage bucket 'ktm-uploads'
@@ -93,14 +94,11 @@ export async function POST(request: Request) {
       const { data: publicUrlData } = supabase.storage.from("ktm-uploads").getPublicUrl(filename);
       fotoKtmUrl = publicUrlData.publicUrl;
     } else {
-      // Fallback ke penyimpanan lokal jika Supabase belum siap (untuk dev environment)
+      // Fallback ke penyimpanan base64 data URL jika Supabase belum siap (untuk dev environment/deploy tanpa Supabase Storage)
       const bytes = await ktmFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
-      await fs.mkdir(uploadDir, { recursive: true });
-      const filepath = path.join(uploadDir, filename);
-      await fs.writeFile(filepath, buffer);
-      fotoKtmUrl = `/uploads/${filename}`;
+      const base64 = buffer.toString("base64");
+      fotoKtmUrl = `data:${ktmFile.type};base64,${base64}`;
     }
 
     // Buat data Mahasiswa baru di Supabase melalui Prisma

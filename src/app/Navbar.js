@@ -1,14 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
+
   // State ini berfungsi untuk membuka dan menutup menu pada layar HP
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
 
   // Periksa status login pengguna saat pertama kali komponen di-render
   useEffect(() => {
+    if (pathname && pathname.startsWith("/portal-advo")) {
+      return;
+    }
     const checkUserSession = async () => {
       try {
         const response = await fetch("/api/auth/me");
@@ -22,7 +28,12 @@ export default function Navbar() {
     };
 
     checkUserSession();
-  }, []);
+  }, [pathname]);
+
+  // Sembunyikan navbar jika sedang berada di portal admin
+  if (pathname && pathname.startsWith("/portal-advo")) {
+    return null;
+  }
 
   // Handler untuk keluar dari sistem
   const handleLogout = async () => {

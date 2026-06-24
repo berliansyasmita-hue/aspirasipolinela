@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import LoadingGold from "../LoadingGold";
 
 export default function BuatAspirasi() {
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -81,10 +82,7 @@ export default function BuatAspirasi() {
         <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 sm:p-10">
           
           {checkingAuth ? (
-            <div className="flex flex-col items-center justify-center py-12 space-y-4">
-              <div className="w-10 h-10 border-4 border-polinela-gold border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-gray-500 text-sm font-medium">Memeriksa status akun mahasiswa...</p>
-            </div>
+            <LoadingGold text="Memeriksa status akun mahasiswa..." textColor="text-gray-500" />
           ) : !user ? (
             // Jika mahasiswa belum login
             <div className="text-center py-8">
