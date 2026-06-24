@@ -79,7 +79,7 @@ export default function DaftarAspirasi() {
 
         {/* Keadaan Memuat (Loading) */}
         {isLoading && (
-          <LoadingGold text="Menarik data aspirasi dari Supabase..." textColor="text-gray-500" />
+          <LoadingGold text="Memuat data aspirasi..." textColor="text-gray-500" />
         )}
 
         {/* Keadaan Eror */}

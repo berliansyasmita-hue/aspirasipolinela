@@ -407,7 +407,7 @@ export default function AdminDashboard() {
 
         {/* LOADING INDICATOR FOR TAB DATA */}
         {loadingData ? (
-          <LoadingGold text="Menarik data terbaru dari Supabase..." textColor="text-slate-500" />
+          <LoadingGold text="Memuat data terbaru..." textColor="text-slate-500" />
         ) : (
           <div className="space-y-6">
             
